@@ -2,4 +2,10 @@
 
 (def default-db
   {:name "re-frame"
-   :age 34})
+   :age 34
+   :turn :X
+   :winner nil
+   :table [
+           [" " " " " "]
+           [" " " " " "]
+           [" " " " " "]]})

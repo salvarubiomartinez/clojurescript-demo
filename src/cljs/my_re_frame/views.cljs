@@ -12,13 +12,22 @@
 
 (defn main-panel []
   (let [name (re-frame/subscribe [::subs/name])
-        age (re-frame/subscribe [::subs/age])]
+        age (re-frame/subscribe [::subs/age])
+        winner (re-frame/subscribe [::subs/winner])
+        table (re-frame/subscribe [::subs/table])]
     [:div
-     [:h1 "Hello from " @name]
-     [:h2 "your age: " @age] 
-     [custom-input name]
+     [:table
+      [:tbody
+       (doall (for [i (range 3)]
+         ^{:key (str "tr-" i)}
+         [:tr (doall (for [j (range 3)]
+         ^{:key (str "td-" j)}
+                [:td
+                 {:on-click #(re-frame/dispatch [:play i j])
+                      :style {:border "1px solid black" :width "30px" :height "30px" :align "center"}}
+                 (get-in @table [i j])]))]))]]
+
      [:br]
-     [:button {:on-click #(re-frame/dispatch [:age-inc])} "inc age"]
-     [:div
-      [:h3 "hi"]]
+     [:button {:on-click #(re-frame/dispatch [:re-start])} "restart"]
+     [:h3 "the winner is " @winner]
      ]))

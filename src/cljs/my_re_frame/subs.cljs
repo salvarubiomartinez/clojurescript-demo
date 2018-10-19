@@ -11,3 +11,13 @@
  ::age
  (fn [db]
    (:age db)))
+
+(re-frame/reg-sub
+ ::table
+ (fn [db]
+   (:table db)))
+
+(re-frame/reg-sub
+ ::winner
+ (fn [db]
+   (:winner db)))
