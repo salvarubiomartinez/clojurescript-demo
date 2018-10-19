@@ -32,21 +32,34 @@
 (defn rows? [table player]
   (reduce (fn [acc y] (if (= acc false) (one-row y player) true)) false table))
 
-(defn get-winner [db]
-  (let [col-table (get-col-table (:table db))]
+(defn get-winner [table]
+  (let [col-table (get-col-table (table))]
   (cond
-    (rows? (:table db) "X") :X
-    (rows? (:table db) "O") :O
+    (rows? (table) "X") :X
+    (rows? (table) "O") :O
     (rows? col-table "X") :X
     (rows? col-table "O") :O
-    (cross-h? (:table db) "X") :X
-    (cross-h? (:table db) "O") :O
-    (cross-w? (:table db) "X") :X
-    (cross-w? (:table db) "O") :O
+    (cross-h? (table) "X") :X
+    (cross-h? (table) "O") :O
+    (cross-w? (table) "X") :X
+    (cross-w? (table) "O") :O
     :else nil)))
 
 (defn set-winner [db]
-  (assoc db :winner (get-winner db)))
+  (assoc db :winner (get-winner (:table db))))
+
+(defn result [table]
+  (cond
+    (= (get-winner table) :X) 1
+    (= (get-winner table) :O) -1
+    :else nil))
+
+(defn minimax [table turn]
+  (if (nil? (result table))
+    (if (= turn :X)
+      (max [(minimax table :O)])
+      (min ((minimax table :X))))
+    (result table)))
 
 (re-frame/reg-event-db
  ::initialize-db
@@ -71,4 +84,4 @@
 (re-frame/reg-event-db
  :play
  (fn [db [_ row col]]
-   (if (nil? (get-winner db)) (set-winner (turn-change (play db row col))) db)))
+   (if (nil? (get-winner (:table db))) (set-winner (turn-change (play db row col))) db)))
